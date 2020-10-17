@@ -44,6 +44,10 @@ socket.on('message', (msg, rinfo) => {
         return;
     }
 
+    if (module.exports.logMessages) {
+        console.log("<<R<<", msg.toString());
+    }
+
     if (discoveryCollector && json.type === "specs") {
         discoveryCollector.push(Object.assign({}, rinfo, {spec: json.data}));
         return;
@@ -55,10 +59,6 @@ socket.on('message', (msg, rinfo) => {
     }
 
     trigger(json.type, json.data, json.meta, rinfo);
-
-    if (module.exports.logMessages) {
-        console.log("<<R<<", msg.toString());
-    }
 });
 
 module.exports = {
