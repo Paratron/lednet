@@ -37,7 +37,7 @@ socket.on('message', (msg, rinfo) => {
     }
 
     if(msg === "hi"){
-        send("specs", specCollector());
+        module.exports.send("specs", internalSpecCollector());
         return;
     }
 
@@ -45,7 +45,7 @@ socket.on('message', (msg, rinfo) => {
     trigger(json.type, json.data, json.meta, rinfo);
 
     if (module.exports.logMessages) {
-        console.log(msg.toString());
+        console.log("<<R<<", msg.toString());
     }
 });
 
@@ -71,6 +71,10 @@ module.exports = {
             target = serverAddress;
         }
 
+        if(module.exports.logMessages){
+            console.log(">>S>>", {type, data});
+        }
+
         socket.send(
             JSON.stringify({
                 type,
@@ -81,7 +85,7 @@ module.exports = {
         );
     },
 
-    discoverClients: () => send("hi"),
+    discoverClients: () => module.exports.send("hi"),
 
     /**
      * Will start the network adapter and bind it to the given port.
