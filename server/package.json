@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "rpi-ws281x": "1.0.34",
-    "node": "11.5.0"
+    "rpi-ws281x": "^1.0.34",
+    "node": "^11.5.0"
   },
   "author": "Christian Engel",
   "license": "ISC"
