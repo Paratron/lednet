@@ -1,7 +1,9 @@
 const net = require("../shared/net");
 
-net.start(net.CLIENT);
+net.start(net.SERVER);
 
-const discoverServer = () => {
+module.exports = {
+    discoverClients: net.discoverClients,
 
+    setColor: (r, g, b) => net.send("setColor", {r,g,b})
 };

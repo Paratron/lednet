@@ -14,6 +14,7 @@ let ownPort;
 let remotePort;
 let serverAddress; // Only used in client mode.
 let internalSpecCollector = () => ({});
+let discoveryCollector;
 
 /**
  * Trigger an event on all listeners.
@@ -36,12 +37,23 @@ socket.on('message', (msg, rinfo) => {
         trigger('ready', null, null, rinfo);
     }
 
-    if(msg === "hi"){
+    const json = JSON.parse(msg.toString());
+
+    if (!json || !json.type) {
+        console.log("Dropped invalid message");
+        return;
+    }
+
+    if (discoveryCollector && json.type === "specs") {
+        discoveryCollector.push(Object.assign({}, rinfo, {spec: json.data}));
+        return;
+    }
+
+    if (json.type === "hi") {
         module.exports.send("specs", internalSpecCollector());
         return;
     }
 
-    const json = JSON.parse(msg.toString());
     trigger(json.type, json.data, json.meta, rinfo);
 
     if (module.exports.logMessages) {
@@ -71,7 +83,7 @@ module.exports = {
             target = serverAddress;
         }
 
-        if(module.exports.logMessages){
+        if (module.exports.logMessages) {
             console.log(">>S>>", {type, data});
         }
 
@@ -85,7 +97,18 @@ module.exports = {
         );
     },
 
-    discoverClients: () => module.exports.send("hi"),
+    discoverClients: (timeoutMS = 500) => new Promise((resolve, reject) => {
+        discoveryCollector = [];
+        setTimeout(() => {
+            if (discoveryCollector.length > 0) {
+                resolve(discoveryCollector);
+                discoveryCollector = undefined;
+                return;
+            }
+            reject();
+        }, timeoutMS);
+        module.exports.send("hi");
+    }),
 
     /**
      * Will start the network adapter and bind it to the given port.
@@ -100,7 +123,7 @@ module.exports = {
         } else {
             ownPort = 41234;
             remotePort = 62882;
-            if(specCollector){
+            if (specCollector) {
                 internalSpecCollector = specCollector;
             }
         }
