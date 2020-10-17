@@ -1,0 +1,11 @@
+{
+  "name": "lednet",
+  "version": "1.0.0",
+  "description": "A UDP based message module for nodeJS for controlling a WS2812 LED strip",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Christian Engel",
+  "license": "ISC"
+}

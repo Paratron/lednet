@@ -1,0 +1,15 @@
+{
+  "name": "lednet-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "rpi-ws281x": "1.0.34",
+    "node": "11.5.0"
+  },
+  "author": "Christian Engel",
+  "license": "ISC"
+}
