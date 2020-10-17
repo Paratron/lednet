@@ -6,13 +6,14 @@ let eventListeners = {};
 
 const MODES = {
     SERVER: 0,
-    CLIENT: 0
+    CLIENT: 1
 };
 
 let netMode;
 let ownPort;
 let remotePort;
 let serverAddress; // Only used in client mode.
+let internalSpecCollector = () => ({});
 
 /**
  * Trigger an event on all listeners.
@@ -33,6 +34,11 @@ socket.on('message', (msg, rinfo) => {
     if (netMode === MODES.CLIENT && !serverAddress) {
         serverAddress = rinfo.address;
         trigger('ready', null, null, rinfo);
+    }
+
+    if(msg === "hi"){
+        send("specs", specCollector());
+        return;
     }
 
     const json = JSON.parse(msg.toString());
@@ -75,11 +81,13 @@ module.exports = {
         );
     },
 
+    discoverClients: () => send("hi"),
+
     /**
      * Will start the network adapter and bind it to the given port.
      * @param {number} mode Use either CLIENT or SERVER from this module.
      */
-    start: (mode) => {
+    start: (mode, specCollector) => {
         netMode = mode;
 
         if (mode === MODES.SERVER) {
@@ -88,6 +96,9 @@ module.exports = {
         } else {
             ownPort = 41234;
             remotePort = 62882;
+            if(specCollector){
+                internalSpecCollector = specCollector;
+            }
         }
 
         socket.bind(ownPort, () => {

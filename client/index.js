@@ -1,7 +1,7 @@
 const net = require("../shared/net");
 const led = require("./led");
 
-net.start(net.SERVER);
+net.start(net.CLIENT, led.getConfig);
 
 net.on('cmd', (data) => {
     console.log("Received command", data);
@@ -10,5 +10,5 @@ net.on('cmd', (data) => {
     led[method].call(arguments);
 });
 
-console.log("LED net started");
+console.log("LED net client started");
 
