@@ -2,6 +2,8 @@ const dgram = require('dgram');
 const socket = dgram.createSocket('udp4');
 const BROADCAST_ADDR = '230.185.192.178';
 
+let instanceId = Math.floor(Math.random() * 7634872394723).toString(32);
+
 let eventListeners = {};
 
 const MODES = {
@@ -9,10 +11,6 @@ const MODES = {
     CLIENT: 1
 };
 
-let netMode;
-let ownPort;
-let remotePort;
-let serverAddress; // Only used in client mode.
 let internalSpecCollector = () => ({});
 let discoveryCollector;
 
@@ -32,11 +30,6 @@ const trigger = (event, data, meta, rinfo) => {
 };
 
 socket.on('message', (msg, rinfo) => {
-    if (netMode === MODES.CLIENT && !serverAddress) {
-        serverAddress = rinfo.address;
-        trigger('ready', null, null, rinfo);
-    }
-
     const json = JSON.parse(msg.toString());
 
     if (!json || !json.type) {
@@ -53,8 +46,8 @@ socket.on('message', (msg, rinfo) => {
         return;
     }
 
-    if (json.type === "hi") {
-        module.exports.send("specs", internalSpecCollector());
+    if (netMode === MODES.CLIENT && json.type === "hi") {
+        module.exports.send("specs", internalSpecCollector(), {instanceId});
         return;
     }
 
@@ -76,9 +69,10 @@ module.exports = {
      *
      * @param {string} type Required message type.
      * @param {*} [data] Optional data payload for the message.
+     * @param {*} [meta] Additional data to the request.
      * @param {string} [target] IP address. Omit to broadcast.
      */
-    send: (type, data, target) => {
+    send: (type, data, meta, instanceId) => {
         if (netMode === MODES.CLIENT && !target) {
             target = serverAddress;
         }
@@ -90,7 +84,8 @@ module.exports = {
         socket.send(
             JSON.stringify({
                 type,
-                data
+                data,
+                exchange
             }),
             remotePort,
             target ? target : BROADCAST_ADDR
@@ -129,11 +124,9 @@ module.exports = {
         }
 
         socket.bind(ownPort, () => {
-            if (mode === MODES.SERVER) {
-                socket.setBroadcast(true);
-                socket.setMulticastTTL(128);
-                socket.addMembership(BROADCAST_ADDR);
-            }
+            socket.setBroadcast(true);
+            socket.setMulticastTTL(128);
+            socket.addMembership(BROADCAST_ADDR);
         });
     },
 
