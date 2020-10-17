@@ -7,7 +7,7 @@ net.start(net.CLIENT);
 net.on('cmd', (data) => {
     console.log("Received command", data);
     const {method, ...arguments} = data;
-    led[method].call(arguments);
+    led[method].apply(null, Object.values(arguments));
 });
 
 console.log("LED net client started");
