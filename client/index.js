@@ -1,6 +1,7 @@
 const net = require("../shared/net");
 const led = require("./led");
 
+net.logMessages = true;
 net.start(net.CLIENT, led.getConfig);
 
 net.on('cmd', (data) => {
