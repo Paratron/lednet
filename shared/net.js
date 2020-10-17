@@ -84,7 +84,7 @@ module.exports = {
         }
 
         if (module.exports.logMessages) {
-            console.log(">>S>>", {type, data});
+            console.log(">>S>>", {type, data}, `to ${target ? target : BROADCAST_ADDR}`);
         }
 
         socket.send(
@@ -129,9 +129,11 @@ module.exports = {
         }
 
         socket.bind(ownPort, () => {
-            socket.setBroadcast(true);
-            socket.setMulticastTTL(128);
-            socket.addMembership(BROADCAST_ADDR);
+            if (mode === MODES.SERVER) {
+                socket.setBroadcast(true);
+                socket.setMulticastTTL(128);
+                socket.addMembership(BROADCAST_ADDR);
+            }
         });
     },
 
