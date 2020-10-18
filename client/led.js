@@ -8,6 +8,7 @@ let pixels;
 function init(newConfig) {
     if (isConfigured) {
         ws281x.reset();
+        ws281x.sleep(500);
     }
     isConfigured = true;
     config = newConfig;
