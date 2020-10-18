@@ -37,6 +37,10 @@ socket.on('message', (msg, rinfo) => {
         return;
     }
 
+    if (json.meta && json.meta.instanceId && json.meta.instanceId !== instanceId) {
+        return;
+    }
+
     if (module.exports.logMessages) {
         console.log("<<R<<", msg.toString());
     }
@@ -72,23 +76,23 @@ module.exports = {
      * @param {*} [meta] Additional data to the request.
      * @param {string} [target] IP address. Omit to broadcast.
      */
-    send: (type, data, meta, instanceId) => {
+    send: (type, data, meta) => {
         if (netMode === MODES.CLIENT && !target) {
             target = serverAddress;
         }
 
         if (module.exports.logMessages) {
-            console.log(">>S>>", {type, data}, `to ${target ? target : BROADCAST_ADDR}`);
+            console.log(">>S>>", {type, data});
         }
 
         socket.send(
             JSON.stringify({
                 type,
                 data,
-                exchange
+                meta
             }),
             remotePort,
-            target ? target : BROADCAST_ADDR
+            BROADCAST_ADDR
         );
     },
 
