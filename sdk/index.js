@@ -1,6 +1,6 @@
 const net = require("../shared/net");
 
-net.logMessages = true;
+// net.logMessages = true;
 net.start(net.SERVER);
 
 let target;
