@@ -7,6 +7,12 @@ net.start(net.CLIENT);
 net.on('cmd', (data) => {
     console.log("Received command", data);
     const {method, arguments} = data;
+
+    if (typeof led[method] === "undefined") {
+        console.log(`Unknown method "${method}" cannot be called.`);
+        return;
+    }
+
     led[method].apply(null, arguments);
 });
 
