@@ -77,10 +77,6 @@ module.exports = {
      * @param {string} [target] IP address. Omit to broadcast.
      */
     send: (type, data, meta) => {
-        if (netMode === MODES.CLIENT && !target) {
-            target = serverAddress;
-        }
-
         if (module.exports.logMessages) {
             console.log(">>S>>", {type, data});
         }
