@@ -5,8 +5,8 @@ net.start(net.SERVER);
 
 let target;
 
-function send(message, data, meta){
-    net.send("cmd", {message: message, arguments: data, meta: Object.assign({}, {instanceId: target})});
+function send(method, data, meta){
+    net.send("cmd", {method, arguments: data, meta: Object.assign({}, {instanceId: target})});
 }
 
 module.exports = {

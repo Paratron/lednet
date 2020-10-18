@@ -59,6 +59,7 @@ socket.on('message', (msg, rinfo) => {
 });
 
 module.exports = {
+    instanceId,
     SERVER: MODES.SERVER,
     CLIENT: MODES.CLIENT,
 
