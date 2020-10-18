@@ -13,6 +13,6 @@ module.exports = {
     discoverClients: net.discoverClients,
     useClient: ({instanceId}) => target = instanceId,
 
-    init: (options) => send("init", options, ),
-    setColor: (r, g, b) => send("setColor", {r,g,b}, {instanceId: target})
+    init: (options) => send("init", [options], ),
+    setColor: (r, g, b) => send("setColor", [r,g,b], {instanceId: target})
 };
