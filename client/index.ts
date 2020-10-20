@@ -1,19 +1,23 @@
 const net = require("../shared/net");
+const substituteMode = process.argv[2] === "substitute";
 const led = require("./led");
+const connector = substituteMode
+    ? require("./browserTestConnector")
+    : require("rpi-ws281x");
 
 net.logMessages = true;
+led.init(connector, { leds: 144 });
 net.start(net.CLIENT, () => led.getConfig());
 
-net.on('cmd', (data) => {
-    console.log("Received command", data);
-    const {data: {method, arguments}} = data;
+net.on('cmd', (data: any) => {
+    const { data: { method, args } } = data;
 
     if (typeof led[method] === "undefined") {
         console.log(`Unknown method "${method}" cannot be called.`);
         return;
     }
 
-    led[method].apply(null, arguments);
+    led[method].apply(null, args);
 });
 
 console.log("LED net client started");

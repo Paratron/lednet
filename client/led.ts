@@ -32,6 +32,11 @@ function setConfig(newConfig: ConnectorConfig){
         connector.reset();
         connector.sleep(500);
     }
+
+    if(!newConfig || typeof newConfig.leds !== "number"){
+        return;
+    }
+
     config = newConfig;
     connector.configure(config);
     pixels = new Uint32Array(config.leds);
