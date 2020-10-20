@@ -1,7 +1,11 @@
 {
   "name": "lednet",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A UDP based message module for nodeJS for controlling a WS2812 LED strip",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Paratron/lednet.git"
+  },
   "main": "./dist/sdk/index.js",
   "files": [
     "dist/**/*.js"
