@@ -11,7 +11,7 @@
     "clientSimulator": "cd client && npm run substitute",
     "clientUI": "cd clientUI && npm start",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "cd clientUI && npm i && cd ../client && cd npm i",
+    "installSubDependencies": "cd clientUI && npm i && cd ../client && cd npm i",
     "prepublishOnly": "tsc"
   },
   "author": {
