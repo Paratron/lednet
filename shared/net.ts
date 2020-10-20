@@ -29,8 +29,13 @@ interface EventListeners {
 
 let eventListeners: EventListeners = {};
 
+export interface Client extends RemoteAddressInformation {
+    spec: any;
+    clientId: string;
+}
+
 let internalSpecCollector = () => ({});
-let discoveryCollector: undefined | any[];
+let discoveryCollector: undefined | Client[];
 
 /**
  * Trigger an event on all listeners.
@@ -60,7 +65,7 @@ socket.on('message', (msg: Buffer, rinfo: RemoteAddressInformation) => {
     }
 
     if (discoveryCollector && json.type === "specs") {
-        discoveryCollector.push(Object.assign({}, rinfo, {spec: json.data}));
+        discoveryCollector.push(Object.assign({}, rinfo, {spec: json.data, clientId: json.meta.clientId}));
         return;
     }
 
@@ -102,7 +107,7 @@ module.exports = {
         );
     },
 
-    discoverClients: (timeoutMS = 1000) => new Promise((resolve, reject) => {
+    discoverClients: (timeoutMS = 1000) => new Promise<Client[]>((resolve, reject) => {
         discoveryCollector = [];
         setTimeout(() => {
             if (discoveryCollector && discoveryCollector.length > 0) {
