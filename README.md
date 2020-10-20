@@ -51,9 +51,9 @@ without running it on a raspberry. The hardware simulator will open in your brow
 Check out the project code to your harddrive. Run `npm i` in the project root. All sub dependencies for the client and
 client UI will be installed as well.
 
-| __Don't be afraid if the install fails!__    
-| This will most likely happen, because the npm module that is used to actually control the hardware on the raspberry pi
-| will only install correctly on a raspberry pi.
+> __Don't be afraid if the install fails!__    
+> This will most likely happen, because the npm module that is used to actually control the hardware on the raspberry pi
+> will only install correctly on a raspberry pi.
 
 To start the client simulator, execute `npm run clientSimulator`. You should see the messages "Using Browser Test Connector"
  and "LED net client started".
