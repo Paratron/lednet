@@ -45,3 +45,18 @@ For testing and/or debugging purposes, the client can also be started without a 
 without running it on a raspberry. The hardware simulator will open in your browser and show live updates.
 
 ![Screenshot of the hardware simulator](./screenshot.png)
+
+### Running the client simulator locally
+
+Check out the project code to your harddrive. Run `npm i` in the project root. All sub dependencies for the client and
+client UI will be installed as well.
+
+| __Don't be afraid if the install fails!__    
+| This will most likely happen, because the npm module that is used to actually control the hardware on the raspberry pi
+| will only install correctly on a raspberry pi.
+
+To start the client simulator, execute `npm run clientSimulator`. You should see the messages "Using Browser Test Connector"
+ and "LED net client started".
+ 
+To actually see something, you need to start the UI in a separate shell with `npm run clientUI`. The UI should open in your
+browser automatically.
