@@ -43,3 +43,5 @@ sent via UDP from a client in the same network and apply the commands on the LED
 
 For testing and/or debugging purposes, the client can also be started without a LED strip connected, or even
 without running it on a raspberry. 
+
+![Screenshot of the hardware simulator](./screenshot.png)
