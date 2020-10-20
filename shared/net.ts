@@ -1,27 +1,41 @@
+import { Socket } from "dgram"
+
+export interface RemoteAddressInformation {
+    address: string;
+    family: "IPv4" | "IPv6";
+    port: number;
+    size: number;
+}
+
+export enum MODE {
+    SERVER,
+    CLIENT
+}
+
+let netMode: MODE;
+let ownPort: number;
+let remotePort: number;
 const dgram = require('dgram');
-const socket = dgram.createSocket('udp4');
+const socket: Socket = dgram.createSocket('udp4');
 const BROADCAST_ADDR = '230.185.192.178';
 
 let instanceId = Math.floor(Math.random() * 7634872394723).toString(32);
 
-let eventListeners = {};
+export type EventListenerFunction = (props: {data: any, meta: any, rinfo: RemoteAddressInformation}) => void;
 
-const MODES = {
-    SERVER: 0,
-    CLIENT: 1
-};
+interface EventListeners {
+    [key: string]: EventListenerFunction[];
+}
+
+let eventListeners: EventListeners = {};
 
 let internalSpecCollector = () => ({});
-let discoveryCollector;
+let discoveryCollector: undefined | any[];
 
 /**
  * Trigger an event on all listeners.
- * @param {string} event
- * @param {*} [data] Optional data payload
- * @param {*} [meta] Optional metadata
- * @param {object} rinfo Remote network info (address, port, etc)
  */
-const trigger = (event, data, meta, rinfo) => {
+const trigger = (event: string, data: any, meta: any, rinfo: RemoteAddressInformation) => {
     if (!eventListeners[event]) {
         return;
     }
@@ -29,7 +43,7 @@ const trigger = (event, data, meta, rinfo) => {
     eventListeners[event].forEach(cb => cb({data, meta, rinfo}));
 };
 
-socket.on('message', (msg, rinfo) => {
+socket.on('message', (msg: Buffer, rinfo: RemoteAddressInformation) => {
     const json = JSON.parse(msg.toString());
 
     if (!json || !json.type) {
@@ -37,7 +51,7 @@ socket.on('message', (msg, rinfo) => {
         return;
     }
 
-    if (netMode === MODES.CLIENT && json.meta && json.meta.instanceId && json.meta.instanceId !== instanceId) {
+    if (netMode === MODE.CLIENT && json.meta && json.meta.instanceId && json.meta.instanceId !== instanceId) {
         return;
     }
 
@@ -50,7 +64,7 @@ socket.on('message', (msg, rinfo) => {
         return;
     }
 
-    if (netMode === MODES.CLIENT && json.type === "hi") {
+    if (netMode === MODE.CLIENT && json.type === "hi") {
         module.exports.send("specs", internalSpecCollector(), {instanceId});
         return;
     }
@@ -60,8 +74,8 @@ socket.on('message', (msg, rinfo) => {
 
 module.exports = {
     instanceId,
-    SERVER: MODES.SERVER,
-    CLIENT: MODES.CLIENT,
+    SERVER: MODE.SERVER,
+    CLIENT: MODE.CLIENT,
 
     /**
      * Set this to true to write all incoming UDP messages to stdout.
@@ -71,13 +85,8 @@ module.exports = {
     /**
      * Will create an UDP message and send it to the network.
      * Either specify a target, or omit to send a broadcast to all devices.
-     *
-     * @param {string} type Required message type.
-     * @param {*} [data] Optional data payload for the message.
-     * @param {*} [meta] Additional data to the request.
-     * @param {string} [target] IP address. Omit to broadcast.
      */
-    send: (type, data, meta) => {
+    send: (type: string, data: any, meta: any) => {
         if (module.exports.logMessages) {
             console.log(">>S>>", {type, data});
         }
@@ -96,7 +105,7 @@ module.exports = {
     discoverClients: (timeoutMS = 1000) => new Promise((resolve, reject) => {
         discoveryCollector = [];
         setTimeout(() => {
-            if (discoveryCollector.length > 0) {
+            if (discoveryCollector && discoveryCollector.length > 0) {
                 resolve(discoveryCollector);
                 discoveryCollector = undefined;
                 return;
@@ -108,12 +117,11 @@ module.exports = {
 
     /**
      * Will start the network adapter and bind it to the given port.
-     * @param {number} mode Use either CLIENT or SERVER from this module.
      */
-    start: (mode, specCollector) => {
+    start: (mode: MODE, specCollector?: () => any) => {
         netMode = mode;
 
-        if (mode === MODES.SERVER) {
+        if (mode === MODE.SERVER) {
             ownPort = 62882;
             remotePort = 41234;
         } else {
@@ -131,16 +139,16 @@ module.exports = {
         });
     },
 
-    on: (event, callback) => {
+    on: (event: string, callback: EventListenerFunction) => {
         eventListeners[event] = eventListeners[event] || [];
         eventListeners[event].push(callback);
     },
 
-    off: (event, callback) => {
+    off: (event: string, callback: EventListenerFunction) => {
         if (!eventListeners[event]) {
             return;
         }
-        const index = eventListeners[event].findIndex(callback);
+        const index = eventListeners[event].findIndex((cb) => cb === callback);
         if (index !== -1) {
             eventListeners[event].splice(index, 1);
         }
