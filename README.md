@@ -16,6 +16,26 @@ does other tasks. Therefore, I needed to have a slim client on the Zero Ws that 
 
 The server can be imported in any nodeJS program and used to send commands to your LED strip or read its state.
 
+This is an example that tries to discover a client on the network, and send color tweens in a two second interval:
+
+```javascript
+const led = require("./sdk");
+
+(async function () {
+    const clients = await led.discoverClients();
+
+    console.log(`Found client at ${clients[0].address}`);
+
+    led.useClient(clients[0]);
+
+    led.configure({leds: 144, type: "grb"});
+
+    setInterval(() => {
+        led.tweenToColor(Math.random() * 255, Math.random() * 255, Math.random() * 255);
+    }, 2000);
+})();
+```
+
 ## Client
 
 The client runs on a raspberry pi with a connected WS2812 LED strip. It will process command messages
