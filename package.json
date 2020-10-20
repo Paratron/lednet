@@ -4,11 +4,18 @@
   "description": "A UDP based message module for nodeJS for controlling a WS2812 LED strip",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "client": "cd client && npm start",
+    "clientSimulator": "cd client && npm run substitute",
+    "clientUI": "cd clientUI && npm start",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "cd clientUI && npm i && cd ../client && cd npm i"
   },
   "author": "Christian Engel",
   "license": "ISC",
   "dependencies": {
+    "@types/d3-color": "2.0.0",
+    "d3-color": "2.0.0",
+    "d3-interpolate": "2.0.1",
     "jest": "26.6.0",
     "typescript": "4.0.3"
   },
