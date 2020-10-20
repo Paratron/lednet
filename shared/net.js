@@ -37,7 +37,7 @@ socket.on('message', (msg, rinfo) => {
         return;
     }
 
-    if (json.meta && json.meta.instanceId && json.meta.instanceId !== instanceId) {
+    if (netMode === MODES.CLIENT && json.meta && json.meta.instanceId && json.meta.instanceId !== instanceId) {
         return;
     }
 
@@ -93,7 +93,7 @@ module.exports = {
         );
     },
 
-    discoverClients: (timeoutMS = 500) => new Promise((resolve, reject) => {
+    discoverClients: (timeoutMS = 1000) => new Promise((resolve, reject) => {
         discoveryCollector = [];
         setTimeout(() => {
             if (discoveryCollector.length > 0) {
@@ -101,7 +101,7 @@ module.exports = {
                 discoveryCollector = undefined;
                 return;
             }
-            reject();
+            reject("No client could be discovered");
         }, timeoutMS);
         module.exports.send("hi");
     }),
