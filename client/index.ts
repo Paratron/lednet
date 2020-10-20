@@ -6,7 +6,7 @@ const connector = substituteMode
     : require("rpi-ws281x");
 
 net.logMessages = true;
-led.init(connector, { leds: 144 });
+led.init(connector, { leds: 0 });
 net.start(net.CLIENT, () => led.getConfig());
 
 net.on('cmd', (data: any) => {

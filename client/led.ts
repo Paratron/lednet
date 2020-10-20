@@ -1,3 +1,6 @@
+const color = require("d3-color");
+const {interpolateNumber} = require("d3-interpolate");
+
 export interface ConnectorConfig {
     leds: number;
     dma?: number;
@@ -59,10 +62,6 @@ function setColorForPixel(index: number, r: number, g: number, b: number, render
     render && connector.render(pixels);
 }
 
-const fixed = (inNumber: number) => Number.parseFloat(inNumber.toFixed(2));
-const tween = (sourceVal: number, targetVal: number, t: number) => fixed(((targetVal - sourceVal) * t) + sourceVal);
-
-
 function tweenToColor(r: number, g: number, b: number) {
     const previousR = rg;
     const previousG = gg;
@@ -71,7 +70,7 @@ function tweenToColor(r: number, g: number, b: number) {
     let i = 0;
     while (i < 1) {
         i += .01;
-        setColor(tween(previousR, r, i), tween(previousG, g, i), tween(previousB, b, i));
+        setColor(interpolateNumber(previousR, r)(i), interpolateNumber(previousG, g)(i), interpolateNumber(previousB, b)(i));
     }
 }
 
@@ -97,7 +96,7 @@ function tweenToBrightness(value: number) {
     let i = 0;
     while (i < 1) {
         i += .1;
-        brightness(tween(previousBrightness, value, i));
+        brightness(interpolateNumber(previousBrightness, value)(i));
     }
 }
 
@@ -111,7 +110,6 @@ module.exports = {
     tweenToBrightness,
     setColorForPixel,
     tweenToColor,
-    tween,
     init,
     configure: setConfig,
     getConfig,

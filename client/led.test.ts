@@ -28,7 +28,9 @@ describe("LED", () => {
 
     it("setColorForPixel", () => {
         led.init(testConnector, { leds: 16 });
+        expect(testConnector.render).toHaveBeenCalledTimes(0);
         led.setColor(0, 0, 0);
+        expect(testConnector.render).toHaveBeenCalledTimes(1);
         led.setColorForPixel(0, 255, 0, 0);
 
         expect(testConnector.render).toHaveBeenCalledTimes(2);
