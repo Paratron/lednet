@@ -19,7 +19,7 @@ const dgram = require('dgram');
 const socket: Socket = dgram.createSocket('udp4');
 const BROADCAST_ADDR = '230.185.192.178';
 
-let instanceId = Math.floor(Math.random() * 7634872394723).toString(32);
+let clientId = Math.floor(Math.random() * 7634872394723).toString(32);
 
 export type EventListenerFunction = (props: {data: any, meta: any, rinfo: RemoteAddressInformation}) => void;
 
@@ -51,7 +51,7 @@ socket.on('message', (msg: Buffer, rinfo: RemoteAddressInformation) => {
         return;
     }
 
-    if (netMode === MODE.CLIENT && json.meta && json.meta.instanceId && json.meta.instanceId !== instanceId) {
+    if (netMode === MODE.CLIENT && json.meta && json.meta.clientId && json.meta.clientId !== clientId) {
         return;
     }
 
@@ -65,7 +65,7 @@ socket.on('message', (msg: Buffer, rinfo: RemoteAddressInformation) => {
     }
 
     if (netMode === MODE.CLIENT && json.type === "hi") {
-        module.exports.send("specs", internalSpecCollector(), {instanceId});
+        module.exports.send("specs", internalSpecCollector(), {clientId});
         return;
     }
 
@@ -73,7 +73,7 @@ socket.on('message', (msg: Buffer, rinfo: RemoteAddressInformation) => {
 });
 
 module.exports = {
-    instanceId,
+    clientId,
     SERVER: MODE.SERVER,
     CLIENT: MODE.CLIENT,
 
