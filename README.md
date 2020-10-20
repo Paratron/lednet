@@ -42,6 +42,6 @@ The client runs on a raspberry pi with a connected WS2812 LED strip. It will pro
 sent via UDP from a client in the same network and apply the commands on the LED strip.
 
 For testing and/or debugging purposes, the client can also be started without a LED strip connected, or even
-without running it on a raspberry. 
+without running it on a raspberry. The hardware simulator will open in your browser and show live updates.
 
 ![Screenshot of the hardware simulator](./screenshot.png)
