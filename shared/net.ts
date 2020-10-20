@@ -144,6 +144,10 @@ module.exports = {
         });
     },
 
+    stop: () => {
+        socket.close();
+    },
+
     on: (event: string, callback: EventListenerFunction) => {
         eventListeners[event] = eventListeners[event] || [];
         eventListeners[event].push(callback);
