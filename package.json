@@ -1,9 +1,8 @@
 {
   "name": "lednet",
-  "version": "0.0.3",
+  "version": "0.0.10",
   "description": "A UDP based message module for nodeJS for controlling a WS2812 LED strip",
-  "main": "dist/sdk/index.js",
-  "bin": "dist/client/index.js",
+  "main": "./dist/sdk/index.js",
   "files": [
     "dist/**/*.js"
   ],
