@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals'
-import { Connector, ConnectorConfig } from "./led"
+import { Connector } from "./led"
 
 const led = require("./led");
 
@@ -15,9 +15,9 @@ const testConnector: Connector = {
 }
 
 describe("LED", () => {
-    it("setColor", () => {
+    it("setRGB", () => {
         led.init(testConnector, { leds: 16 });
-        led.setColor(255, 0, 0);
+        led.setRGB(255, 0, 0);
 
         expect(testConnector.render).toHaveBeenCalledTimes(1);
 
@@ -26,12 +26,12 @@ describe("LED", () => {
         });
     });
 
-    it("setColorForPixel", () => {
+    it("setPixelRGB", () => {
         led.init(testConnector, { leds: 16 });
         expect(testConnector.render).toHaveBeenCalledTimes(0);
-        led.setColor(0, 0, 0);
+        led.setRGB(0, 0, 0);
         expect(testConnector.render).toHaveBeenCalledTimes(1);
-        led.setColorForPixel(0, 255, 0, 0);
+        led.setPixelRGB(0, 255, 0, 0);
 
         expect(testConnector.render).toHaveBeenCalledTimes(2);
 

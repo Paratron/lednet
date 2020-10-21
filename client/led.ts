@@ -1,5 +1,5 @@
 const color = require("d3-color");
-const {interpolateNumber} = require("d3-interpolate");
+const { interpolateNumber } = require("d3-interpolate");
 
 export interface ConnectorConfig {
     leds: number;
@@ -30,13 +30,13 @@ function init(useConnector: Connector, newConfig: ConnectorConfig) {
     setConfig(newConfig);
 }
 
-function setConfig(newConfig: ConnectorConfig){
+function setConfig(newConfig: ConnectorConfig) {
     if (config) {
         connector.reset();
         connector.sleep(500);
     }
 
-    if(!newConfig || typeof newConfig.leds !== "number"){
+    if (!newConfig || typeof newConfig.leds !== "number") {
         return;
     }
 
@@ -49,20 +49,30 @@ function getConfig() {
     return Object.assign({}, config);
 }
 
-function setColor(r: number, g: number, b: number, render = true) {
+function setRGB(r: number, g: number, b: number, render = true) {
     rg = r;
     gg = g;
     bg = b;
-    pixels.forEach((p, i) => setColorForPixel(i, r, g, b, false));
+    pixels.forEach((p, i) => setPixelRGB(i, r, g, b, false));
     render && connector.render(pixels);
 }
 
-function setColorForPixel(index: number, r: number, g: number, b: number, render = true) {
+function setHSL(h: number, s: number, l: number, render = true) {
+    const { r, g, b } = color.hsl(h, s, l).rgb();
+    setRGB(r, g, b, render);
+}
+
+function setPixelRGB(index: number, r: number, g: number, b: number, render = true) {
     pixels[index] = (r << 16) | (g << 8) | b;
     render && connector.render(pixels);
 }
 
-function tweenToColor(r: number, g: number, b: number) {
+function setPixelHSL(index: number, h: number, s: number, l: number, render = true){
+    const { r, g, b } = color.hsl(h, s, l).rgb();
+    setPixelRGB(index, r, g, b, render);
+}
+
+function tweenToRGB(r: number, g: number, b: number) {
     const previousR = rg;
     const previousG = gg;
     const previousB = bg;
@@ -70,8 +80,13 @@ function tweenToColor(r: number, g: number, b: number) {
     let i = 0;
     while (i < 1) {
         i += .01;
-        setColor(interpolateNumber(previousR, r)(i), interpolateNumber(previousG, g)(i), interpolateNumber(previousB, b)(i));
+        setRGB(interpolateNumber(previousR, r)(i), interpolateNumber(previousG, g)(i), interpolateNumber(previousB, b)(i));
     }
+}
+
+function tweenToHSL(h: number, s: number, l: number) {
+    const { r, g, b } = color.hsl(h, s, l).rgb();
+    tweenToRGB(r, g, b);
 }
 
 function brightness(value: number) {
@@ -83,9 +98,9 @@ function brightness(value: number) {
 
     for (let i = 0; i < pixels.length; i++) {
         if (i % activeLEDs === 0) {
-            setColorForPixel(i, previousR, previousG, previousB, false);
+            setPixelRGB(i, previousR, previousG, previousB, false);
         } else {
-            setColorForPixel(i, 0, 0, 0, false);
+            setPixelRGB(i, 0, 0, 0, false);
         }
     }
     connector.render(pixels);
@@ -101,15 +116,18 @@ function tweenToBrightness(value: number) {
 }
 
 function off() {
-    setColor(0, 0, 0);
+    setRGB(0, 0, 0);
 }
 
 module.exports = {
-    setColor,
+    setRGB,
+    setHSL,
     brightness,
     tweenToBrightness,
-    setColorForPixel,
-    tweenToColor,
+    setPixelRGB,
+    setPixelHSL,
+    tweenToRGB,
+    tweenToHSL,
     init,
     configure: setConfig,
     getConfig,
