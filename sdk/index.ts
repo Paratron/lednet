@@ -9,9 +9,12 @@ function remoteFunctionCall(method: string, data: any, clientId: string){
 
 interface ClientInterface extends Client {
     configure: (options: ConnectorConfig) => void;
-    setColor: (r: number, g: number, b: number) => void;
-    setColorForPixel: (index: number, r: number, g: number, b: number) => void;
-    tweenToColor: (r: number, g: number, b: number) => void;
+    setRGB: (r: number, g: number, b: number) => void;
+    setHSL: (h: number, s: number, l: number) => void;
+    setPixelRGB: (index: number, r: number, g: number, b: number) => void;
+    setPixelHSL: (index: number, h: number, s: number, l: number) => void;
+    tweenToRGB: (r: number, g: number, b: number) => void;
+    tweenToHSL: (h: number, s: number, l: number) => void;
     brightness: (value: number) => void;
     tweenToBrightness: (value: number) => void;
 }
@@ -19,9 +22,12 @@ interface ClientInterface extends Client {
 const clientInterface = (client: Client): ClientInterface => ({
     ...client,
     configure: (options: ConnectorConfig) => remoteFunctionCall("configure", [options], client.clientId ),
-    setColor: (r: number, g: number, b: number) => remoteFunctionCall("setColor", [r,g,b], client.clientId),
-    setColorForPixel: (index: number, r: number, g: number, b: number) => remoteFunctionCall("setColorForPixel", [index,r,g,b], client.clientId),
-    tweenToColor: (r: number, g: number, b: number) => remoteFunctionCall("tweenToColor", [r,g,b], client.clientId),
+    setRGB: (r: number, g: number, b: number) => remoteFunctionCall("setRGB", [r,g,b], client.clientId),
+    setHSL: (h: number, s: number, l: number) => remoteFunctionCall("setHSL", [h,s,l], client.clientId),
+    setPixelRGB: (index: number, r: number, g: number, b: number) => remoteFunctionCall("setPixelRGB", [index,r,g,b], client.clientId),
+    setPixelHSL: (index: number, h: number, s: number, l: number) => remoteFunctionCall("setPixelHSL", [index,h,s,l], client.clientId),
+    tweenToRGB: (r: number, g: number, b: number) => remoteFunctionCall("tweenToRGB", [r,g,b], client.clientId),
+    tweenToHSL: (h: number, s: number, l: number) => remoteFunctionCall("tweenToHSL", [h,s,l], client.clientId),
     brightness: (value: number) => remoteFunctionCall("brightness", [value], client.clientId),
     tweenToBrightness: (value: number) => remoteFunctionCall("tweenToBrightness", [value], client.clientId),
 });
