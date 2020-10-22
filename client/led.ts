@@ -66,15 +66,18 @@ function setPixelRGB(index: number, r: number, g: number, b: number, render = tr
     render && connector.render(pixels);
 }
 
-function setPixelHSL(index: number, h: number, s: number, l: number, render = true){
+function setPixelHSL(index: number, h: number, s: number, l: number, render = true) {
     const { r, g, b } = d3.hsl(h, s, l).rgb();
     setPixelRGB(index, r, g, b, render);
 }
 
+let tweenInterval: NodeJS.Timeout;
 function tweenToRGB(r: number, g: number, b: number, durationMS: number = 1000) {
     const previousR = rg;
     const previousG = gg;
     const previousB = bg;
+
+    clearInterval(tweenInterval);
 
     const getT = d3.scaleLinear().domain([Date.now(), Date.now() + durationMS]).range([0, 1]);
 
@@ -83,14 +86,18 @@ function tweenToRGB(r: number, g: number, b: number, durationMS: number = 1000) 
     const interpolateB = d3.interpolateNumber(previousB, b);
 
     let t = getT(Date.now());
-    while (t < 1) {
-        t = getT(Date.now());
+    tweenInterval = setInterval(() => {
+        t = Math.min(1, getT(Date.now()));
         setRGB(
             interpolateR(t),
             interpolateG(t),
             interpolateB(t)
         );
-    }
+
+        if (t === 1) {
+            clearInterval(tweenInterval);
+        }
+    }, 1);
 }
 
 function tweenToHSL(h: number, s: number, l: number, durationMS: number = 1000) {
