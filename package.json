@@ -11,8 +11,8 @@
     "dist/**/*.js"
   ],
   "scripts": {
-    "client": "cd client && npm start",
-    "clientSimulator": "cd client && npm run substitute",
+    "client": "tsc && node ./dist/client/index.js",
+    "clientSimulator": "tsc && node ./dist/client/index.js substitute",
     "clientUI": "cd clientUI && npm start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "installSubDependencies": "cd clientUI && npm i && cd ../client && cd npm i",
@@ -24,11 +24,10 @@
   },
   "license": "ISC",
   "dependencies": {
-    "d3-color": "2.0.0",
-    "d3-interpolate": "2.0.1"
+    "d3": "6.2.0"
   },
   "devDependencies": {
-    "@types/d3-color": "2.0.0",
+    "@types/d3": "5.16.3",
     "@types/jest": "26.0.14",
     "@types/node": "14.11.10",
     "ts-jest": "26.4.1",

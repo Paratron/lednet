@@ -8,8 +8,7 @@
     "substitute": "node index.js substitute"
   },
   "dependencies": {
-    "d3-color": "2.0.0",
-    "d3-interpolate": "2.0.1",
+    "d3": "6.2.0",
     "node": "^11.5.0",
     "rpi-ws281x": "^1.0.34",
     "socket.io": "2.3.0"
