@@ -26,6 +26,17 @@ describe("LED", () => {
         });
     });
 
+    it("setHSL", () => {
+        led.init(testConnector, { leds: 16 });
+        led.setHSL(0, 1, .5);
+
+        expect(testConnector.render).toHaveBeenCalledTimes(1);
+
+        renderHistory[0].forEach(val => {
+            expect(val.toString(16)).toBe("ff0000");
+        });
+    });
+
     it("setPixelRGB", () => {
         led.init(testConnector, { leds: 16 });
         expect(testConnector.render).toHaveBeenCalledTimes(0);
