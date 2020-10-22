@@ -15,7 +15,7 @@ try {
     console.log("Using default config");
 }
 
-net.logMessages = true;
+net.logMessages = substituteMode;
 led.init(connector, config);
 net.start(net.CLIENT, () => led.getConfig());
 

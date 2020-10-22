@@ -10,9 +10,9 @@ export interface Program {
     /** unique name to identify and start the program */
     name: string;
     /** Define a crontab to start the program automatically */
-    crontab: string | null;
+    crontab?: string;
     /** Should the program be started automatically or manually */
-    autostart: boolean;
+    autostart?: boolean;
     /** How long should the program run in seconds */
     duration: number;
     /** Commands to execute across the program runtime */
@@ -62,6 +62,8 @@ function removeProgram(name: string) {
     }
 
     delete programs[name];
+
+    return true;
 }
 
 function startProgram(name: string): boolean {

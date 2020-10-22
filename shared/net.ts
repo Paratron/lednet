@@ -22,7 +22,7 @@ const BROADCAST_ADDR = '230.185.192.178';
 
 let clientId = Math.floor(Math.random() * 7634872394723).toString(32);
 
-export type EventListenerFunction = (props: {data: any, meta: any, rinfo: RemoteAddressInformation, response: (data: any) => void}) => void;
+export type EventListenerFunction = (props: {data: any, meta: any, rinfo: RemoteAddressInformation}, response: (data: any) => void) => void;
 
 interface EventListeners {
     [key: string]: EventListenerFunction[];
@@ -54,7 +54,7 @@ const trigger = (event: string, data: any, meta: Meta, rinfo: RemoteAddressInfor
 
     const response = (responseData: any) => module.exports.send(event, responseData, {msgIdResponse: meta.msgId});
 
-    eventListeners[event].forEach(cb => cb({data, meta, rinfo, response}));
+    eventListeners[event].forEach(cb => cb({data, meta, rinfo}, response));
 };
 
 socket.on('message', (msg: Buffer, rinfo: RemoteAddressInformation) => {
@@ -108,14 +108,14 @@ module.exports = {
      * Either specify a target, or omit to send a broadcast to all devices.
      */
     send: (type: string, data: any, meta: any, callback?: (data: any) => void) => {
-        if (module.exports.logMessages) {
-            console.log(">>S>>", { type, data });
-        }
-
         const msgId = uuid();
 
         if(callback){
             responseWaiters[msgId] = callback;
+        }
+
+        if (module.exports.logMessages) {
+            console.log(">>S>>", JSON.stringify({ type, data, meta: Object.assign({}, meta, {msgId}) }));
         }
 
         socket.send(
