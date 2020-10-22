@@ -1,5 +1,4 @@
-const color = require("d3-color");
-const { interpolateNumber } = require("d3-interpolate");
+const d3 = require("d3");
 
 export interface ConnectorConfig {
     leds: number;
@@ -58,7 +57,7 @@ function setRGB(r: number, g: number, b: number, render = true) {
 }
 
 function setHSL(h: number, s: number, l: number, render = true) {
-    const { r, g, b } = color.hsl(h, s, l).rgb();
+    const { r, g, b } = d3.hsl(h, s, l).rgb();
     setRGB(r, g, b, render);
 }
 
@@ -68,25 +67,35 @@ function setPixelRGB(index: number, r: number, g: number, b: number, render = tr
 }
 
 function setPixelHSL(index: number, h: number, s: number, l: number, render = true){
-    const { r, g, b } = color.hsl(h, s, l).rgb();
+    const { r, g, b } = d3.hsl(h, s, l).rgb();
     setPixelRGB(index, r, g, b, render);
 }
 
-function tweenToRGB(r: number, g: number, b: number) {
+function tweenToRGB(r: number, g: number, b: number, durationMS: number = 1000) {
     const previousR = rg;
     const previousG = gg;
     const previousB = bg;
 
-    let i = 0;
-    while (i < 1) {
-        i += .01;
-        setRGB(interpolateNumber(previousR, r)(i), interpolateNumber(previousG, g)(i), interpolateNumber(previousB, b)(i));
+    const getT = d3.scaleLinear().domain([Date.now(), Date.now() + durationMS]).range([0, 1]);
+
+    const interpolateR = d3.interpolateNumber(previousR, r);
+    const interpolateG = d3.interpolateNumber(previousG, g);
+    const interpolateB = d3.interpolateNumber(previousB, b);
+
+    let t = getT(Date.now());
+    while (t < 1) {
+        t = getT(Date.now());
+        setRGB(
+            interpolateR(t),
+            interpolateG(t),
+            interpolateB(t)
+        );
     }
 }
 
-function tweenToHSL(h: number, s: number, l: number) {
-    const { r, g, b } = color.hsl(h, s, l).rgb();
-    tweenToRGB(r, g, b);
+function tweenToHSL(h: number, s: number, l: number, durationMS: number = 1000) {
+    const { r, g, b } = d3.hsl(h, s, l).rgb();
+    tweenToRGB(r, g, b, durationMS);
 }
 
 function brightness(value: number) {
@@ -109,9 +118,12 @@ function brightness(value: number) {
 function tweenToBrightness(value: number) {
     const previousBrightness = brightnessG;
     let i = 0;
+
+    const interpolator = d3.interpolateNumber(previousBrightness, value);
+
     while (i < 1) {
         i += .1;
-        brightness(interpolateNumber(previousBrightness, value)(i));
+        brightness(interpolator(i));
     }
 }
 
