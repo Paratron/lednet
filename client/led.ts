@@ -72,10 +72,14 @@ function setPixelHSL(index: number, h: number, s: number, l: number, render = tr
 }
 
 let tweenInterval: NodeJS.Timeout;
-function tweenToRGB(r: number, g: number, b: number, durationMS: number = 1000) {
+function tweenToRGB(r: number, g: number, b: number, durationMS: number = 1000, updateSpeedMS?: number) {
     const previousR = rg;
     const previousG = gg;
     const previousB = bg;
+
+    if(!updateSpeedMS){
+        updateSpeedMS = durationMS / 100;
+    }
 
     clearInterval(tweenInterval);
 
@@ -97,12 +101,12 @@ function tweenToRGB(r: number, g: number, b: number, durationMS: number = 1000) 
         if (t === 1) {
             clearInterval(tweenInterval);
         }
-    }, 1);
+    }, updateSpeedMS);
 }
 
-function tweenToHSL(h: number, s: number, l: number, durationMS: number = 1000) {
+function tweenToHSL(h: number, s: number, l: number, durationMS: number = 1000, updateSpeedMS?: number) {
     const { r, g, b } = d3.hsl(h, s, l).rgb();
-    tweenToRGB(r, g, b, durationMS);
+    tweenToRGB(r, g, b, durationMS, updateSpeedMS);
 }
 
 function brightness(value: number) {
