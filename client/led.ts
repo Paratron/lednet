@@ -36,12 +36,25 @@ function setConfig(newConfig: ConnectorConfig) {
     }
 
     if (!newConfig || typeof newConfig.leds !== "number") {
+        console.log("Dropping new config. Its malformed.");
         return;
     }
 
     config = newConfig;
     connector.configure(config);
     pixels = new Uint32Array(config.leds);
+
+    try {
+        const fs = require("fs");
+        fs.writeFile(`${__dirname}/savedConfig.json`, JSON.stringify(config), (err: any) => {
+            if(err){
+                console.log("Could not save config", err);
+                return;
+            }
+        });
+    } catch (e) {
+        console.log("Config could not be persisted");
+    }
 }
 
 function getConfig() {
@@ -72,12 +85,13 @@ function setPixelHSL(index: number, h: number, s: number, l: number, render = tr
 }
 
 let tweenInterval: NodeJS.Timeout;
+
 function tweenToRGB(r: number, g: number, b: number, durationMS: number = 1000, updateSpeedMS?: number) {
     const previousR = rg;
     const previousG = gg;
     const previousB = bg;
 
-    if(!updateSpeedMS){
+    if (!updateSpeedMS) {
         updateSpeedMS = durationMS / 100;
     }
 
