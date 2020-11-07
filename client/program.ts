@@ -1,3 +1,5 @@
+import ErrnoException = NodeJS.ErrnoException
+
 const d3 = require("d3");
 const led = require("./led");
 
@@ -28,8 +30,24 @@ export interface ProgramCommand {
     t: number;
 }
 
+function savePrograms() {
+    require("fs").writeFile("./programs.json", JSON.stringify(programs), () => {
+    });
+}
+
+function loadPrograms() {
+    require("fs").readFile("./programs.json", "utf8", (err: ErrnoException | null, data: string) => {
+        if (err) {
+            return;
+        }
+
+        programs = JSON.parse(data);
+    });
+}
+
 function setProgram(program: Program) {
     programs[program.name] = program;
+    savePrograms();
 }
 
 function listPrograms(): string[] {
@@ -63,10 +81,12 @@ function removeProgram(name: string) {
 
     delete programs[name];
 
+    savePrograms();
+
     return true;
 }
 
-function startProgram(name: string): boolean {
+function startProgram(name: string, startTime: number = Date.now()): boolean {
     if (!programs[name]) {
         return false;
     }
@@ -79,7 +99,7 @@ function startProgram(name: string): boolean {
     const program = programs[name];
 
     const getT = d3.scaleLinear()
-        .domain([Date.now(), Date.now() + program.duration])
+        .domain([startTime, startTime + program.duration])
         .range([0, 1]);
 
     let lastExecutedCommandIndex = -1;
@@ -116,6 +136,8 @@ function stopProgram() {
     activeProgramProgress = undefined;
     activeProgramName = undefined;
 }
+
+loadPrograms();
 
 module.exports = {
     listPrograms,
