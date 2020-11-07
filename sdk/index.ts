@@ -33,7 +33,7 @@ interface ClientInterface extends Client {
     tweenToRGB: (r: number, g: number, b: number, durationMS?: number, updateSpeedMS?: number) => void;
     tweenToHSL: (h: number, s: number, l: number, durationMS?: number, updateSpeedMS?: number) => void;
     brightness: (value: number) => void;
-    tweenToBrightness: (value: number) => void;
+    tweenToBrightness: (value: number, durationMS?: number, updateSpeedMS?: number) => void;
 
     setProgram: (program: Program) => void;
     listPrograms: () => Promise<string[]>;
@@ -57,7 +57,7 @@ const clientInterface = (client: Client): ClientInterface => {
         tweenToRGB: (r: number, g: number, b: number, durationMS: number = 1000, updateSpeedMS) => remoteFunctionCall("tweenToRGB", [r, g, b, durationMS, updateSpeedMS]),
         tweenToHSL: (h: number, s: number, l: number, durationMS: number = 1000, updateSpeedMS) => remoteFunctionCall("tweenToHSL", [h, s, l, durationMS, updateSpeedMS]),
         brightness: (value: number) => remoteFunctionCall("brightness", [value]),
-        tweenToBrightness: (value: number) => remoteFunctionCall("tweenToBrightness", [value]),
+        tweenToBrightness: (value: number, durationMS: number = 1000, updateSpeedMS) => remoteFunctionCall("tweenToBrightness", [value,durationMS,updateSpeedMS]),
 
         setProgram: (program: Program) => remoteFunctionCall("setProgram", [program]),
         listPrograms: () => remoteFunctionCall("listPrograms", null, true),
