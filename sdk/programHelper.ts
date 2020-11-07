@@ -8,7 +8,7 @@ function calculateProgramDuration(commands: InternalCommandEntry[]): number {
         if (time > duration) {
             duration = time;
             if(cmd.substr(0, 5) === "tween"){
-                duration += args[args.length - 2] || 1;
+                duration += args[args.length - 2] || 1000;
             }
         }
         return duration;
@@ -35,15 +35,15 @@ function createProgram() {
 
     return {
         commands,
-        addCommand: (timeSeconds: number) => ({
-            setRGB: (r: number, g: number, b: number) => addCommand(timeSeconds, "setRGB", [r, g, b]),
-            setHSL: (h: number, s: number, l: number) => addCommand(timeSeconds, "setHSL", [h, s, l]),
-            setPixelRGB: (index: number, r: number, g: number, b: number) => addCommand(timeSeconds, "setPixelRGB", [index, r, g, b]),
-            setPixelHSL: (index: number, h: number, s: number, l: number) => addCommand(timeSeconds, "setPixelHSL", [index, h, s, l]),
-            tweenToRGB: (r: number, g: number, b: number, durationMS?: number, updateSpeedMS?: number) => addCommand(timeSeconds, "tweenToRGB", [r, g, b, durationMS, updateSpeedMS]),
-            tweenToHSL: (h: number, s: number, l: number, durationMS?: number, updateSpeedMS?: number) => addCommand(timeSeconds, "tweenToHSL", [h, s, l, durationMS, updateSpeedMS]),
-            brightness: (value: number) => addCommand(timeSeconds, "brightness", [value]),
-            tweenToBrightness: (value: number, durationMS?: number, updateSpeedMS?: number) => addCommand(timeSeconds, "tweenToBrightness", [value, durationMS, updateSpeedMS])
+        addCommand: (timeMS: number) => ({
+            setRGB: (r: number, g: number, b: number) => addCommand(timeMS, "setRGB", [r, g, b]),
+            setHSL: (h: number, s: number, l: number) => addCommand(timeMS, "setHSL", [h, s, l]),
+            setPixelRGB: (index: number, r: number, g: number, b: number) => addCommand(timeMS, "setPixelRGB", [index, r, g, b]),
+            setPixelHSL: (index: number, h: number, s: number, l: number) => addCommand(timeMS, "setPixelHSL", [index, h, s, l]),
+            tweenToRGB: (r: number, g: number, b: number, durationMS?: number, updateSpeedMS?: number) => addCommand(timeMS, "tweenToRGB", [r, g, b, durationMS, updateSpeedMS]),
+            tweenToHSL: (h: number, s: number, l: number, durationMS?: number, updateSpeedMS?: number) => addCommand(timeMS, "tweenToHSL", [h, s, l, durationMS, updateSpeedMS]),
+            brightness: (value: number) => addCommand(timeMS, "brightness", [value]),
+            tweenToBrightness: (value: number, durationMS?: number, updateSpeedMS?: number) => addCommand(timeMS, "tweenToBrightness", [value, durationMS, updateSpeedMS])
         }),
         /**
          * Calculates the final program data to be sent to the lednet client

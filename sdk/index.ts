@@ -78,7 +78,7 @@ module.exports = (logMessages = false) => {
             const clients = await net.discoverClients();
             return clients.map(clientInterface);
         },
-        createProgram: require("./programs"),
+        createProgram: require("./programHelper"),
         stop: net.stop
     };
 };
