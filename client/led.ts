@@ -140,16 +140,27 @@ function brightness(value: number) {
     connector.render(pixels);
 }
 
-function tweenToBrightness(value: number) {
+function tweenToBrightness(value: number, durationMS: number = 1000, updateSpeedMS?: number) {
     const previousBrightness = brightnessG;
-    let i = 0;
 
-    const interpolator = d3.interpolateNumber(previousBrightness, value);
-
-    while (i < 1) {
-        i += .1;
-        brightness(interpolator(i));
+    if (!updateSpeedMS) {
+        updateSpeedMS = durationMS / 100;
     }
+
+    clearInterval(tweenInterval);
+
+    const getT = d3.scaleLinear().domain([Date.now(), Date.now() + durationMS]).range([0, 1]);
+    const interpolate = d3.interpolateNumber(previousBrightness, value);
+
+    let t = getT(Date.now());
+    tweenInterval = setInterval(() => {
+        t = Math.min(1, getT(Date.now()));
+        brightness(interpolate(t));
+
+        if (t === 1) {
+            clearInterval(tweenInterval);
+        }
+    }, updateSpeedMS);
 }
 
 function off() {
