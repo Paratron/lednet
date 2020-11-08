@@ -31,12 +31,12 @@ export interface ProgramCommand {
 }
 
 function savePrograms() {
-    require("fs").writeFile("./programs.json", JSON.stringify(programs), () => {
+    require("fs").writeFile(`${__dirname}/programs.json`, JSON.stringify(programs), () => {
     });
 }
 
 function loadPrograms() {
-    require("fs").readFile("./programs.json", "utf8", (err: ErrnoException | null, data: string) => {
+    require("fs").readFile(`${__dirname}/programs.json`, "utf8", (err: ErrnoException | null, data: string) => {
         if (err) {
             return;
         }
@@ -95,6 +95,9 @@ function startProgram(name: string, startTime: number = Date.now()): boolean {
         stopProgram();
     }
 
+    console.log("Started program", name);
+    const tStart = Date.now();
+
     activeProgramName = name;
     const program = programs[name];
 
@@ -108,12 +111,25 @@ function startProgram(name: string, startTime: number = Date.now()): boolean {
         activeProgramProgress = getT(Date.now());
         const c = getProgramCommand(program.commands, activeProgramProgress as number, lastExecutedCommandIndex);
         if (c) {
+            console.log("Runtime: ", Date.now() - tStart);
+            console.log("Executing", c);
             lastExecutedCommandIndex = program.commands.indexOf(c);
-            const { method, args } = c;
+            const { method, args: originalArgs } = c;
+            const args = originalArgs.slice();
+
+            if (method.substr(0, 5) === "tween") {
+                const durationArg = args[args.length - 2];
+                // Everything < 1 will be considered a relative/elastic duration.
+                if (durationArg && durationArg < 1) {
+                    args[args.length - 2] = program.duration * durationArg;
+                }
+            }
+
             led[method].apply(null, args);
         }
 
         if (lastExecutedCommandIndex === program.commands.length - 1 || activeProgramProgress === 1) {
+            console.log("Program finished");
             stopProgram();
         }
     }, 100);
